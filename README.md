@@ -87,8 +87,6 @@ Este proyecto está bajo la [Licencia MIT](LICENSE).
 ## Enlaces del Proyecto
 
 * **Repositorio GitHub:** `https://github.com/flinoz/sky-customer-app-v2`
-* **Video 1 (Explicación de Configuración y Pasos):** `[Enlace a tu Video 1]`
-* **Video 2 (Demostración de Funcionalidad y Versionamiento):** `[Enlace a tu Video 2]`
 
 ## Contacto
 
