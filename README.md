@@ -1,6 +1,6 @@
 # Sky App v2.0 - Sistema de Gestión de Clientes
 
-![Sky App v2.0 Logo](img/sky_app_logo.png)
+![Sky App v2.0 Logo](img/LOGO.PNG)
 
 ## Descripción General del Proyecto
 
@@ -17,7 +17,7 @@
 
 ## Estructura del Repositorio
 
-sky-customer-app-v2/ ├── .github/ # Workflows de GitHub Actions ├── customer_service/ # Microservicio de clientes ├── storage_service/ # Microservicio de almacenamiento ├── .gitignore # Archivo para ignorar en Git ├── README.md # Este archivo ├── LICENSE # Licencia MIT └── img/ # Imágenes (logo y evidencias) ├── sky_app_logo.png ├── EVI01.png ├── EVI02.png ├── EVI03.png └── EVI04.png
+sky-customer-app-v2/ ├── .github/ # Workflows de GitHub Actions ├── customer_service/ # Microservicio de clientes ├── storage_service/ # Microservicio de almacenamiento ├── .gitignore # Archivo para ignorar en Git ├── README.md # Este archivo ├── LICENSE # Licencia MIT └── img/ # Imágenes (logo y evidencias) ├── LOGO.PNG ├── EVI01.png ├── EVI02.png ├── EVI03.png └── EVI04.png
 
 
 ## Configuración y Ejecución Local
@@ -87,8 +87,9 @@ Este proyecto está bajo la [Licencia MIT](LICENSE).
 ## Enlaces del Proyecto
 
 * **Repositorio GitHub:** `https://github.com/flinoz/sky-customer-app-v2`
+* **Video 1 (Explicación de Configuración y Pasos):** `[Enlace a tu Video 1]`
+* **Video 2 (Demostración de Funcionalidad y Versionamiento):** `[Enlace a tu Video 2]`
 
 ## Contacto
 
 FLINOZ91@GMAIL.COM o abre un `issue` en el repositorio.
-```
