@@ -1,0 +1,58 @@
+name: Deploy to AWS EC2 Production
+
+on:
+  workflow_dispatch: # Permite disparar el workflow manualmente desde la interfaz de GitHub
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # Ejecuta en una máquina virtual Ubuntu
+
+    steps:
+    - name: Checkout code # Obtiene el código del repositorio
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials # Configura las credenciales para interactuar con AWS
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1 # Reemplaza con la región de AWS donde está tu instancia EC2
+
+    - name: Deploy to EC2 # Conecta vía SSH y ejecuta comandos de despliegue en la instancia EC2
+      env:
+        EC2_HOST: ${{ secrets.EC2_PUBLIC_IP }} # IP pública de tu instancia EC2 (definido como Secret)
+        EC2_USER: ec2-user # Usuario SSH por defecto para Amazon Linux 2
+        SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # Clave SSH privada (definido como Secret)
+      run: |
+        echo "Iniciando despliegue a la instancia EC2: $EC2_HOST"
+        
+        # Configurar clave SSH privada temporalmente para la conexión
+        mkdir -p ~/.ssh
+        echo "$SSH_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        
+        # Conectarse vía SSH y ejecutar el script de despliegue
+        # La redirección '<< 'EOF'' permite ejecutar múltiples comandos remotos
+        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'EOF'
+          echo "Conectado a EC2. Pulling latest code from main branch..."
+          cd /home/ec2-user/sky-customer-app-v2 # Asegúrate de que esta sea la ruta correcta de tu repo en EC2
+          git pull origin main # Obtener la última versión del código
+          
+          echo "Instalando/Actualizando dependencias Python para Customer Service..."
+          cd customer_service
+          pip3 install -r requirements.txt
+          
+          echo "Instalando/Actualizando dependencias Python para Storage Service..."
+          cd ../storage_service
+          pip3 install -r requirements.txt
+          
+          echo "Reiniciando servicios de aplicación..."
+          sudo systemctl restart customer_service # Reinicia el servicio customer_service via Systemd
+          sudo systemctl restart storage_service # Reinicia el servicio storage_service via Systemd
+          
+          echo "Verificando estado de los servicios:"
+          sudo systemctl status customer_service storage_service || true # Mostrar estado, '|| true' para no fallar el workflow si un servicio no arranca
+          
+          echo "Despliegue completado en EC2."
+        EOF
+        echo "Despliegue de workflow completado."

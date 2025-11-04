@@ -1,0 +1,26 @@
+name: Require Code Review Reminder
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize] # Se dispara en varios eventos de Pull Request
+
+jobs:
+  remind_review:
+    runs-on: ubuntu-latest # Ejecuta en una máquina virtual Ubuntu
+    permissions:
+      pull-requests: write # Necesita permisos para escribir en Pull Requests (comentarios)
+    steps:
+    - name: Post review reminder comment # Publica un comentario recordando la necesidad de revisión
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const pr = context.payload.pull_request;
+          // Solo comentar si no hay ya comentarios del bot sobre revisión o si no está aprobado
+          if (pr.requested_reviewers.length === 0 && pr.review_comments === 0) {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '👋 ¡Hola! Este Pull Request está listo para ser revisado. Por favor, asegúrate de que al menos un revisor del equipo lo apruebe antes de fusionarlo a la rama `main`.'
+            });
+          }

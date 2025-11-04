@@ -1,0 +1,31 @@
+name: Automate Issue Triage
+
+on:
+  issues:
+    types: [opened] # Este workflow se dispara cuando se abre un nuevo issue
+
+jobs:
+  label_and_comment:
+    runs-on: ubuntu-latest # Ejecuta en una máquina virtual Ubuntu
+    permissions:
+      issues: write # Necesita permisos para escribir en issues (añadir etiquetas, comentarios)
+    steps:
+    - name: Add labels based on keywords # Añade etiquetas automáticamente según palabras clave en el título/cuerpo del issue
+      uses: actions-ecosystem/action-add-labels@v1
+      with:
+        labels: |
+          bug: bug, error, defect, malfunction, issue, incorrect, broken
+          feature: feature, new function, request, idea, enhance, functionality, add
+          improvement: improve, optimize, update, upgrade, performance
+        github_token: ${{ secrets.GITHUB_TOKEN }} # Token automático proporcionado por GitHub Actions
+        
+    - name: Post welcome comment # Publica un comentario de bienvenida en el issue
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number, # Número del issue actual
+            owner: context.repo.owner, # Propietario del repositorio
+            repo: context.repo.repo, # Nombre del repositorio
+            body: '¡Gracias por abrir este issue! El equipo lo revisará pronto y lo asignará al miembro correspondiente. Agradecemos tu contribución a la mejora de la aplicación. Mantente atento a las actualizaciones.'
+          })

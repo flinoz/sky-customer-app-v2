@@ -1,0 +1,70 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - feature/* # Dispara en push a main o ramas feature
+  pull_request:
+    branches:
+      - main # Dispara en Pull Requests a main
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest # Ejecuta en una máquina virtual Ubuntu
+
+    steps:
+    - name: Checkout code # Obtiene el código del repositorio
+      uses: actions/checkout@v4
+
+    - name: Set up Python # Configura el entorno Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies for Customer Service # Instala dependencias del servicio de clientes
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r customer_service/requirements.txt
+
+    - name: Install dependencies for Storage Service # Instala dependencias del servicio de almacenamiento
+      run: |
+        pip install -r storage_service/requirements.txt
+
+    - name: Run basic tests/linting for Customer Service # Ejecuta verificación de sintaxis para Customer Service
+      run: |
+        # Aquí se ejecutarían pruebas unitarias reales (ej. pytest tests/)
+        # Para este ejemplo, solo se verifica que el archivo Python sea compilable.
+        python -m py_compile customer_service/app.py
+        echo "Customer Service syntax check passed."
+
+    - name: Run basic tests/linting for Storage Service # Ejecuta verificación de sintaxis para Storage Service
+      run: |
+        python -m py_compile storage_service/app.py
+        echo "Storage Service syntax check passed."
+
+    - name: Verify Flask applications can start (basic check) # Intento básico de iniciar las apps
+      run: |
+        echo "Attempting to start Customer Service..."
+        flask --app customer_service.app run --host 0.0.0.0 --port 5002 &
+        CUSTOMER_PID=$! # Guarda el ID del proceso
+        echo "Customer Service PID: $CUSTOMER_PID"
+
+        echo "Attempting to start Storage Service..."
+        flask --app storage_service.app run --host 0.0.0.0 --port 5001 &
+        STORAGE_PID=$! # Guarda el ID del proceso
+        echo "Storage Service PID: $STORAGE_PID"
+        
+        sleep 5 # Dar tiempo para que los servidores arranquen
+
+        echo "Checking Customer Service health endpoint..."
+        curl -s -f http://localhost:5002/clientes || { echo "Customer Service not responding!"; exit 1; }
+        echo "Customer Service responded successfully."
+
+        echo "Checking Storage Service health endpoint..."
+        curl -s -f http://localhost:5001/archivos || { echo "Storage Service not responding!"; exit 1; }
+        echo "Storage Service responded successfully."
+
+        # Matar los procesos de los servidores Flask
+        kill $CUSTOMER_PID $STORAGE_PID || true
+        echo "Flask services stopped."

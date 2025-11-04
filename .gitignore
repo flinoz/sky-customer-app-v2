@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Editor files (ej. VS Code, Sublime Text, PyCharm)
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# Environment variables
+.env
+.flaskenv
+
+# Data storage for storage_service (simulated)
+# Importante: Esto ignora los datos generados por el storage_service para no subirlos al repo
+storage_service/client_data/
+
+# AWS
+.aws/
+# Si guardas claves SSH directamente en el repo (NO RECOMENDADO, usar secrets de GitHub)
+# *.pem
+
+# Otros
+*.swp
+*~
