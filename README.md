@@ -84,7 +84,7 @@ El proyecto demuestra el uso de Git (`git revert`) para la recuperación de desa
 
 Este proyecto está bajo la [Licencia MIT](LICENSE).
 
-## Enlaces del Proyecto
+## Enlaces del ProyectO
 
 * **Repositorio GitHub:** `https://github.com/flinoz/sky-customer-app-v2`
 
